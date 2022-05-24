@@ -24,6 +24,7 @@
           <component id="23492" class="javax.swing.JLabel" binding="label">
             <constraints/>
             <properties>
+              <font swing-font="Button.font"/>
               <text value="Query"/>
             </properties>
           </component>

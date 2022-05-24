@@ -2,6 +2,9 @@ package GUI;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.IntelliJTheme;
+import main.FileUtils;
+import main.FtpClient;
 import main.JDBCUtils;
 
 import javax.swing.*;
@@ -25,23 +28,17 @@ import java.awt.event.ActionListener;
 
 public class MainUI extends JFrame {
     public MainUI() {
-        FlatLightLaf.install();
-
+        setUIFont (new javax.swing.plaf.FontUIResource("Open Sans",Font.PLAIN,14));
         initComponents();
         this.setSize(350, 500);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         this.setVisible(true);
     }
 
     private void initComponents() {
 
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        try {
-            UIManager.setLookAndFeel(new FlatDarculaLaf());
-        } catch (Exception ex) {
-            System.err.println("Failed to initialize LaF");
-        }
+
 
         panel12 = new JPanel();
         panel8 = new JPanel();
@@ -148,8 +145,8 @@ public class MainUI extends JFrame {
                                     "jdbc:oracle:thin:@" + textField5.getText() + ":" + textField6.getText() + ":" + textField7.getText(),
                                     textField8.getText(),
                                     textField9.getText(),
-                                    new main.FileUtils(),
-                                    new main.FtpClient());
+                                    new FileUtils(),
+                                    new FtpClient());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -169,6 +166,17 @@ public class MainUI extends JFrame {
         });
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
+
+    public static void setUIFont (javax.swing.plaf.FontUIResource f){
+        java.util.Enumeration keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get (key);
+            if (value instanceof javax.swing.plaf.FontUIResource)
+                UIManager.put (key, f);
+        }
+    }
+
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel panel12;

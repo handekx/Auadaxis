@@ -24,7 +24,7 @@ public class FileUtils {
     }
 
     public void addManualRow() {
-    writeFile("2;1000000;0;Y;2010-03-18 16:09:28.0;100;2010-06-22 10:02:55.0;100;haithem;null;null;haithem@fi-taipei.com;null;1000783;N;null;null;1000653;1000001;null;null;null;null;null;2010-06-22 00:00:00.0;Facture: VTE10071;null;null;null;null;null;Y;null;E;null;cting;null;null;null;N;null;", true);
+    writeFile("7;1000000;0;Y;2010-03-18 16:09:28.0;100;2010-06-22 10:02:55.0;100;haithem;null;null;haithem@mail.com;null;1000783;N;null;null;1000653;1000001;null;null;null;null;null;2010-06-22 00:00:00.0;Facture: VTE10071;null;null;null;null;null;Y;null;E;null;cting;null;null;null;N;null;", true);
     }
 
 

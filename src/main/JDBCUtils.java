@@ -103,6 +103,7 @@ public class JDBCUtils {
     }
 
     public void importFromTxt(String sfile) {
+        String query;
         File file = new File(sfile);
         Scanner sc = null;
         try {
@@ -111,16 +112,13 @@ public class JDBCUtils {
             while (sc.hasNextLine()) {
                 String row = sc.nextLine();
                 String[] rowData = row.split(";");
-                System.out.println(rowData[0]);
                 if (!userExist(rowData[0])) {
                     System.out.println(Arrays.toString(rowData));
-                    String query = "INSERT INTO AD_USER(AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, ISFULLBPACCESS, NOTIFICATIONTYPE, VALUE) " +
+                    query = "INSERT INTO AD_USER(AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, ISFULLBPACCESS, NOTIFICATIONTYPE, VALUE) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     PreparedStatement pst = null;
                     try {
-                        count++;
                         pst = connection.prepareStatement(query);
-
                         pst.setBigDecimal(1, BigDecimal.valueOf(Double.valueOf(rowData[0])));
                         pst.setBigDecimal(2, BigDecimal.valueOf(Double.valueOf(rowData[1])));
                         pst.setBigDecimal(3, BigDecimal.valueOf(Double.valueOf(rowData[2])));
