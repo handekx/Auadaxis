@@ -17,7 +17,9 @@
       <grid id="3279a" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints border-constraint="North"/>
         <properties/>
-        <border type="line" title="Query Panel"/>
+        <border type="line" title="Query Panel">
+          <color color="-4473925"/>
+        </border>
         <children>
           <component id="23492" class="javax.swing.JLabel" binding="label">
             <constraints/>

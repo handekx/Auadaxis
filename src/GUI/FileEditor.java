@@ -15,9 +15,11 @@ public class FileEditor {
         this.jdbcUtils = jdbcUtils;
 
         JFrame frame = new JFrame("FileEditor");
+
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
+
         frame.setVisible(true);
         initTextPane();
     }

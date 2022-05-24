@@ -29,6 +29,7 @@ public class MainUI extends JFrame {
 
         initComponents();
         this.setSize(350, 500);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         this.setVisible(true);
     }
