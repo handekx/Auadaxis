@@ -6,9 +6,10 @@ import java.io.IOException;
 
 public class FileUtils {
 
-    public void createFile() {
+    public File createFile() {
+        File myFile = null;
         try {
-            File myFile = new File("ad_user_content.txt");
+             myFile = new File("ad_user_content.txt");
             if (myFile.createNewFile()) {
                 System.out.println("File created: " + myFile.getName());
             } else {
@@ -19,6 +20,7 @@ public class FileUtils {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+        return myFile;
     }
 
     public void addManualRow() {

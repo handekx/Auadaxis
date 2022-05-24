@@ -58,35 +58,46 @@ public class JDBCUtils {
         }
     }
 
-    public void getUser() {
+    public ResultSet getUser(String query) {
         try {
-            Statement stmt = connection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM AD_USER");
-            ResultSetMetaData resultMd = result.getMetaData();
-            fileUtils.createFile();
-            while (result.next()) {
-
-                String row = "";
-                for (int i = 1; i < resultMd.getColumnCount() + 1; i++) {
-
-                    //System.out.println(resultMd.getColumnClassName(i));
-                    if(i < resultMd.getColumnCount() + 1)
-                    row = row + result.getObject(i) + ";";
-                    else row = row + result.getObject(i);
-                }
-                //System.out.println(row);
-                fileUtils.writeFile(row, true);
-            }
-
-
+            ResultSet result = connection.prepareStatement(query,
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY).executeQuery();
+            return result;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e);
+            return null;
         }
     }
 
-    public void uploadUserTableContent(String sFile) throws Exception {
-        ftpClient.uploadFTPFile(sFile, "ad_user_content.txt", "/home/audaxis/Formation_2022/heithem");
+    public void saveAsFile(ResultSet resultSet) throws SQLException {
+        fileUtils.createFile();
+        resultSet.beforeFirst();
+        String colName = "";
+        for (int j = 1; j < resultSet.getMetaData().getColumnCount() + 1; j++) {
+            if (j == resultSet.getMetaData().getColumnCount())
+                colName = colName + resultSet.getMetaData().getColumnName(j);
+            else colName = colName + resultSet.getMetaData().getColumnName(j) + ";";
+        }
+        this.fileUtils.writeFile(colName, true);
+        while (resultSet.next()) {
+            String row = "";
+            for (int j = 1; j < resultSet.getMetaData().getColumnCount() + 1; j++) {
+                if (j == resultSet.getMetaData().getColumnCount())
+                    row = row + resultSet.getObject(j);
+                else row = row + resultSet.getObject(j) + ";";
+
+            }
+            this.fileUtils.writeFile(row, true);
+        }
+
+
     }
+
+    public void uploadUserTableContent(String sFile) throws Exception {
+        ftpClient.uploadFTPFile(sFile, "ad_user_content.txt", "/home/audaxis/Formation_2022/heithem/");
+    }
+
     public void addManualRow() {
         fileUtils.addManualRow();
     }
@@ -101,7 +112,7 @@ public class JDBCUtils {
                 String row = sc.nextLine();
                 String[] rowData = row.split(";");
                 System.out.println(rowData[0]);
-                if(!userExist(rowData[0])) {
+                if (!userExist(rowData[0])) {
                     System.out.println(Arrays.toString(rowData));
                     String query = "INSERT INTO AD_USER(AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, ISFULLBPACCESS, NOTIFICATIONTYPE, VALUE) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -109,6 +120,7 @@ public class JDBCUtils {
                     try {
                         count++;
                         pst = connection.prepareStatement(query);
+
                         pst.setBigDecimal(1, BigDecimal.valueOf(Double.valueOf(rowData[0])));
                         pst.setBigDecimal(2, BigDecimal.valueOf(Double.valueOf(rowData[1])));
                         pst.setBigDecimal(3, BigDecimal.valueOf(Double.valueOf(rowData[2])));
@@ -123,10 +135,9 @@ public class JDBCUtils {
                         pst.setString(12, rowData[35]);
                         pst.executeQuery();
                     } catch (SQLException e) {
-                        System.out.println("Error "+e+"  "+count);
+                        System.out.println("Error " + e + "  " + count);
                     }
                 }
-
 
 
             }

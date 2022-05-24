@@ -28,10 +28,13 @@ public class MainUI extends JFrame {
         FlatLightLaf.install();
 
         initComponents();
+        this.setSize(350, 500);
+
         this.setVisible(true);
     }
 
     private void initComponents() {
+
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         try {
             UIManager.setLookAndFeel(new FlatDarculaLaf());
@@ -139,12 +142,16 @@ public class MainUI extends JFrame {
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        jdbcUtils = new main.JDBCUtils("oracle.jdbc.driver.OracleDriver",
-                                "jdbc:oracle:thin:@" + textField5.getText() + ":" + textField6.getText() + ":" + textField7.getText(),
-                                textField8.getText(),
-                                textField9.getText(),
-                                new main.FileUtils(),
-                                new main.FtpClient());
+                        try {
+                            jdbcUtils = new JDBCUtils("oracle.jdbc.driver.OracleDriver",
+                                    "jdbc:oracle:thin:@" + textField5.getText() + ":" + textField6.getText() + ":" + textField7.getText(),
+                                    textField8.getText(),
+                                    textField9.getText(),
+                                    new main.FileUtils(),
+                                    new main.FtpClient());
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
                         if (jdbcUtils.connect() == null) {
                             JOptionPane.showMessageDialog(null, "Cannot connect to database",
                                     "Error!", JOptionPane.ERROR_MESSAGE);

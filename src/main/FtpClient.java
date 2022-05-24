@@ -6,15 +6,14 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class FtpClient {
     FTPClient ftp;
 
 
-    public  FtpClient() {
 
-    }
-    public FtpClient(String s) throws Exception {
+    public FtpClient() throws Exception {
         ftp = new FTPClient();
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
@@ -38,9 +37,10 @@ public class FtpClient {
     public void uploadFTPFile(String localFileFullName, String fileName, String hostDir)
             throws Exception {
         try {
-            InputStream input = new FileInputStream(new File(localFileFullName));
+            File f = new File(localFileFullName);
+            InputStream input = Files.newInputStream(f.toPath());
 
-            this.ftp.storeFile(hostDir + fileName, input);
+            this.ftp.storeFile(hostDir+fileName, input);
         } catch (Exception e) {
 
         }
