@@ -5,6 +5,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 
@@ -14,6 +15,10 @@ public class FtpClient {
 
 
     public FtpClient() throws Exception {
+
+    }
+
+    public void connectFtp() throws Exception {
         ftp = new FTPClient();
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
@@ -33,7 +38,6 @@ public class FtpClient {
         ftp.enterLocalPassiveMode();
     }
 
-
     public void uploadFTPFile(String localFileFullName, String fileName, String hostDir)
             throws Exception {
         try {
@@ -41,8 +45,9 @@ public class FtpClient {
             InputStream input = Files.newInputStream(f.toPath());
 
             this.ftp.storeFile(hostDir+fileName, input);
+            JOptionPane.showMessageDialog (null, "File uploaded correctly", "Succes", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
-
+            JOptionPane.showMessageDialog (null, "Could not upload file to server", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

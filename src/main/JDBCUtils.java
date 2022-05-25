@@ -1,5 +1,6 @@
 package main;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
@@ -11,6 +12,9 @@ public class JDBCUtils {
     String className, URL, user, password;
     Connection connection;
     FileUtils fileUtils;
+
+
+
     FtpClient ftpClient;
 
     public JDBCUtils(String className, String URL, String user, String password, FileUtils fileUtils, FtpClient ftpClient) {
@@ -44,6 +48,8 @@ public class JDBCUtils {
 
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
+            JOptionPane.showMessageDialog (null, "Conection Failed: "+ex, "Error", JOptionPane.ERROR_MESSAGE);
+
 
         }
         return connection;
@@ -70,8 +76,8 @@ public class JDBCUtils {
         }
     }
 
-    public void saveAsFile(ResultSet resultSet) throws SQLException {
-        fileUtils.createFile();
+    public void saveAsFile(ResultSet resultSet, File selectedFile) throws SQLException {
+        fileUtils.createFile(selectedFile);
         resultSet.beforeFirst();
         String colName = "";
         for (int j = 1; j < resultSet.getMetaData().getColumnCount() + 1; j++) {
@@ -86,7 +92,6 @@ public class JDBCUtils {
                 if (j == resultSet.getMetaData().getColumnCount())
                     row = row + resultSet.getObject(j);
                 else row = row + resultSet.getObject(j) + ";";
-
             }
             this.fileUtils.writeFile(row, true);
         }
@@ -95,51 +100,58 @@ public class JDBCUtils {
     }
 
     public void uploadUserTableContent(String sFile) throws Exception {
-        ftpClient.uploadFTPFile(sFile, "ad_user_content.txt", "/home/audaxis/Formation_2022/heithem/");
+        ftpClient.connectFtp();
+        ftpClient.uploadFTPFile(fileUtils.getMyFile().getName(), sFile, "/home/audaxis/Formation_2022/heithem/");
     }
 
     public void addManualRow() {
         fileUtils.addManualRow();
     }
 
-    public void importFromTxt(String sfile) {
+    public void importFromTxt() {
         String query;
-        File file = new File(sfile);
+        File file = fileUtils.getMyFile();
+
         Scanner sc = null;
         try {
             sc = new Scanner(file);
+            boolean ignoreColNameRow = false;
             int count = 0;
             while (sc.hasNextLine()) {
                 String row = sc.nextLine();
-                String[] rowData = row.split(";");
-                if (!userExist(rowData[0])) {
-                    System.out.println(Arrays.toString(rowData));
-                    query = "INSERT INTO AD_USER(AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, ISFULLBPACCESS, NOTIFICATIONTYPE, VALUE) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    PreparedStatement pst = null;
-                    try {
-                        pst = connection.prepareStatement(query);
-                        pst.setBigDecimal(1, BigDecimal.valueOf(Double.valueOf(rowData[0])));
-                        pst.setBigDecimal(2, BigDecimal.valueOf(Double.valueOf(rowData[1])));
-                        pst.setBigDecimal(3, BigDecimal.valueOf(Double.valueOf(rowData[2])));
-                        pst.setString(4, rowData[3]);
-                        pst.setTimestamp(5, java.sql.Timestamp.valueOf(rowData[4]));
-                        pst.setBigDecimal(6, BigDecimal.valueOf(Double.valueOf(rowData[5])));
-                        pst.setTimestamp(7, java.sql.Timestamp.valueOf(rowData[6]));
-                        pst.setBigDecimal(8, BigDecimal.valueOf(Double.valueOf(rowData[7])));
-                        pst.setString(9, rowData[8]);
-                        pst.setString(10, rowData[31]);
-                        pst.setString(11, rowData[33]);
-                        pst.setString(12, rowData[35]);
-                        pst.executeQuery();
-                    } catch (SQLException e) {
-                        System.out.println("Error " + e + "  " + count);
+                if (ignoreColNameRow) {
+                    String[] rowData = row.split(";");
+                    if (!userExist(rowData[0])) {
+
+                        query = "INSERT INTO AD_USER(AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, ISFULLBPACCESS, NOTIFICATIONTYPE, VALUE) " +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement pst = null;
+                        try {
+                            pst = connection.prepareStatement(query);
+                            pst.setBigDecimal(1, BigDecimal.valueOf(Double.valueOf(rowData[0])));
+                            pst.setBigDecimal(2, BigDecimal.valueOf(Double.valueOf(rowData[1])));
+                            pst.setBigDecimal(3, BigDecimal.valueOf(Double.valueOf(rowData[2])));
+                            pst.setString(4, rowData[3]);
+                            pst.setTimestamp(5, java.sql.Timestamp.valueOf(rowData[4]));
+                            pst.setBigDecimal(6, BigDecimal.valueOf(Double.valueOf(rowData[5])));
+                            pst.setTimestamp(7, java.sql.Timestamp.valueOf(rowData[6]));
+                            pst.setBigDecimal(8, BigDecimal.valueOf(Double.valueOf(rowData[7])));
+                            pst.setString(9, rowData[8]);
+                            pst.setString(10, rowData[31]);
+                            pst.setString(11, rowData[33]);
+                            pst.setString(12, rowData[35]);
+                            pst.executeQuery();
+                            count++;
+                        } catch (SQLException e) {
+                            System.out.println("Error " + e);
+                            JOptionPane.showMessageDialog (null, "Import failed:" + e , "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
-
-
+                ignoreColNameRow = true;
             }
-
+            sc.close();
+            JOptionPane.showMessageDialog (null, "Import Succes: " + count + " Row Imported" , "Succes", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
         } catch (SQLException e) {
@@ -156,5 +168,49 @@ public class JDBCUtils {
         pst.setBigDecimal(1, BigDecimal.valueOf(Double.valueOf(userID)));
         ResultSet result = pst.executeQuery();
         return !(result.next() == false);
+    }
+
+
+
+    public void genericImport(String sfile) throws FileNotFoundException {
+        String query = "INSERT INTO AD_USER (";
+        File file = new File(sfile);
+        Scanner sc = new Scanner(file);;
+        int count = 0;
+        while (sc.hasNextLine()) {
+            String row = sc.nextLine();
+            String queryValues = "";
+            if (count > 0) {
+                String [] rowValue = row.split(";");
+                for(String value : rowValue) {
+                    queryValues = queryValues + "'" + value + "',";
+
+                }
+                StringBuffer sb = new StringBuffer(query);
+                sb.deleteCharAt(sb.length()-1);
+                queryValues = queryValues +")";
+                query = query + queryValues;
+            }
+            else {
+                String [] colNames = row.split(";");
+                for(String colName : colNames) {
+                    query = query + colName + ",";
+                }
+                StringBuffer sb= new StringBuffer(query);
+                sb.deleteCharAt(sb.length()-1);
+                query = query +") VALUES (";
+            }
+            System.out.println(query);
+            count++;
+        }
+
+    }
+
+    public FileUtils getFileUtils() {
+        return fileUtils;
+    }
+
+    public FtpClient getFtpClient() {
+        return ftpClient;
     }
 }

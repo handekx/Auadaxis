@@ -1,19 +1,23 @@
 package main;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileUtils {
 
-    public File createFile() {
-        File myFile = null;
+
+    public void setMyFile(File myFile) {
+        this.myFile = myFile;
+    }
+
+    private File myFile;
+
+    public File createFile(File selectedFile) {
+        myFile = selectedFile;
         try {
-             myFile = new File("ad_user_content.txt");
             if (myFile.createNewFile()) {
                 System.out.println("File created: " + myFile.getName());
             } else {
-                System.out.println("File already exists.");
+                System.out.println("File already exists! Cleaning file content");
                 writeFile("", false);
             }
         } catch (IOException e) {
@@ -24,29 +28,27 @@ public class FileUtils {
     }
 
     public void addManualRow() {
-    writeFile("7;1000000;0;Y;2010-03-18 16:09:28.0;100;2010-06-22 10:02:55.0;100;haithem;null;null;haithem@mail.com;null;1000783;N;null;null;1000653;1000001;null;null;null;null;null;2010-06-22 00:00:00.0;Facture: VTE10071;null;null;null;null;null;Y;null;E;null;cting;null;null;null;N;null;", true);
+        writeFile("70;1000022;0;Y;2010-11-25 15:43:57.0;100;2010-11-25 15:43:57.0;100;Contact04;null;null;contact04@mail.com;null;1002396;N;null;null;null;null;null;null;null;null;null;null;null;null;null;null;null;null;Y;null;E;null;1000006;null;null;null;N;null", true);
     }
 
 
     public void writeFile(String tableRow, boolean append) {
-        if(tableRow.equals("")) {
-            FileWriter myWriter = null;
+        if (tableRow.equals("")) {
             try {
-                myWriter = new FileWriter("ad_user_content.txt", append);
-                myWriter.write("");
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
+
+                PrintWriter writer = new PrintWriter(myFile);
+                writer.print("");
+                writer.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
         else {
             try {
-                FileWriter myWriter = new FileWriter("ad_user_content.txt", append);
-                myWriter.write(tableRow+"\n");
+                FileWriter myWriter = new FileWriter(myFile, append);
+                myWriter.write(tableRow + "\n");
                 myWriter.close();
-                System.out.println("Successfully wrote to the file.");
+
             } catch (IOException e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
@@ -55,7 +57,7 @@ public class FileUtils {
 
     }
 
-
-
-
+    public File getMyFile() {
+        return myFile;
+    }
 }

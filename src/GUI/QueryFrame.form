@@ -125,6 +125,12 @@
               <text value="Save As FIle"/>
             </properties>
           </component>
+          <component id="753b2" class="javax.swing.JButton" binding="browseButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Browse"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="ba569" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

@@ -164,6 +164,24 @@ public class MainUI extends JFrame {
 
             }
         });
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    jdbcUtils = new JDBCUtils("oracle.jdbc.driver.OracleDriver",
+                            "jdbc:oracle:thin:@" + textField5.getText() + ":" + textField6.getText() + ":" + textField7.getText(),
+                            textField8.getText(),
+                            textField9.getText(),
+                            new FileUtils(),
+                            new FtpClient());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                if(jdbcUtils.connect() != null) JOptionPane.showMessageDialog (null, "Conection succed!", "Succes", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        });
+
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 

@@ -9,17 +9,22 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
-
         try {
             UIManager.setLookAndFeel( new FlatLightLaf() );
         } catch( Exception ex ) {
             System.err.println( "Failed to initialize LaF" );
         }
-
         IntelliJTheme.install(Main.class.getResourceAsStream(
                 "arc-theme-orange.theme.json" ) );
+
         MainUI mainUI = new MainUI();
+
+
+
+
+
+
+
         /*main.JDBCUtils jdbcUtils = new main.JDBCUtils("oracle.jdbc.driver.OracleDriver",
                 "jdbc:oracle:thin:@192.168.30.152:1521:oracledb",
                 "haithem",

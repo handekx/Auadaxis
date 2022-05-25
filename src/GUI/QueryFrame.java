@@ -23,6 +23,7 @@ public class QueryFrame {
     private JButton exportToDBButton;
     private JButton addRowButton;
     private JButton previewButton;
+    private JButton browseButton;
     private JDBCUtils jdbcUtils;
     private ResultSet currentResult;
 
@@ -73,8 +74,15 @@ public class QueryFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    jdbcUtils.saveAsFile(currentResult);
-                    JOptionPane.showMessageDialog (null, "File Saved!", "File", JOptionPane.INFORMATION_MESSAGE);
+                    JFileChooser choix = new JFileChooser();
+                    int retour = choix.showOpenDialog(null);
+                    if (retour == JFileChooser.APPROVE_OPTION) {
+                        choix.getSelectedFile().getName();
+                        choix.getSelectedFile().getAbsolutePath();
+                        jdbcUtils.saveAsFile(currentResult, choix.getSelectedFile());
+                        JOptionPane.showMessageDialog(null, "File Saved!", "File", JOptionPane.INFORMATION_MESSAGE);
+                    } else ;
+
                 } catch (SQLException ex) {
 
                 }
@@ -85,7 +93,12 @@ public class QueryFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    jdbcUtils.uploadUserTableContent("ad_user_content.txt");
+                    if (jdbcUtils.getFileUtils().getMyFile() != null) {
+                        jdbcUtils.uploadUserTableContent("ad_user_content.txt");
+                    }
+                    else JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
+
+
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -94,23 +107,49 @@ public class QueryFrame {
         addRowButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jdbcUtils.addManualRow();
+                if (jdbcUtils.getFileUtils().getMyFile() != null) {
+                    jdbcUtils.addManualRow();
+                    JOptionPane.showMessageDialog(null, "Row Added!", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                } else
+                    JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
+
             }
         });
 
         previewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileEditor fileEditor = new FileEditor(jdbcUtils);
+                if (jdbcUtils.getFileUtils().getMyFile() != null) {
+                    FileEditor fileEditor = new FileEditor(jdbcUtils);
+                } else
+                    JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         exportToDBButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (jdbcUtils.getFileUtils().getMyFile() != null)
+                    jdbcUtils.importFromTxt();
+                else
+                    JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
+
 
             }
         });
+    browseButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser choix = new JFileChooser();
+            int retour = choix.showOpenDialog(null);
+            if (retour == JFileChooser.APPROVE_OPTION) {
+                choix.getSelectedFile().getName();
+                choix.getSelectedFile().getAbsolutePath();
+                jdbcUtils.getFileUtils().setMyFile(choix.getSelectedFile());
+                JOptionPane.showMessageDialog(null, "File Saved!", "File", JOptionPane.INFORMATION_MESSAGE);
+            } else ;
+        }
+    });
     }
 
 
@@ -127,20 +166,13 @@ public class QueryFrame {
         resultSet.beforeFirst();
         int i = 0;
         while (resultSet.next()) {
-
-                System.out.println(resultSet.getObject(1));
-                for (int j = 1; j < tab.length + 1; j++) {
-
-                    data[i][j-1] = resultSet.getObject(j);
-                }
-                i++;
-
-
+            for (int j = 1; j < tab.length + 1; j++) {
+                data[i][j - 1] = resultSet.getObject(j);
+            }
+            i++;
         }
         DefaultTableModel dtm = new DefaultTableModel(data, tab);
-
         table1.setModel(dtm);
-
     }
 
 

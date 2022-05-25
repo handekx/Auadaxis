@@ -25,18 +25,19 @@ public class FileEditor {
     }
 
     public void initTextPane() {
-        File f = new File("ad_user_content.txt");
+        File f = jdbcUtils.getFileUtils().getMyFile();
         Scanner sc = null;
         try {
             sc = new Scanner(f);
-
+            while (sc.hasNextLine()) {
+                textPane1.setText(textPane1.getText() + "\n" + sc.nextLine() + "\n");
+            }
+            sc.close();
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        while (sc.hasNextLine()) {
-            textPane1.setText(textPane1.getText() + "\n" + sc.nextLine() + "\n");
-        }
+
     }
 
     private JTextPane textPane1;
