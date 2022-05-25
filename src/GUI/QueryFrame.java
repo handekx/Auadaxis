@@ -35,9 +35,8 @@ public class QueryFrame {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
         initComponent();
-
+        frame.setVisible(true);
     }
 
     private void initComponent() {
@@ -176,6 +175,4 @@ public class QueryFrame {
         DefaultTableModel dtm = new DefaultTableModel(data, tab);
         table1.setModel(dtm);
     }
-
-
 }
