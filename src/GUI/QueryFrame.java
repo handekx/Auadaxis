@@ -3,7 +3,9 @@ package GUI;
 import main.JDBCUtils;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -95,8 +97,8 @@ public class QueryFrame {
                 try {
                     if (jdbcUtils.getFileUtils().getMyFile() != null) {
                         jdbcUtils.uploadUserTableContent("ad_user_content.txt");
-                    }
-                    else JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else
+                        JOptionPane.showMessageDialog(null, "Please choose a file or save one!", "Error", JOptionPane.ERROR_MESSAGE);
 
 
                 } catch (Exception ex) {
@@ -137,19 +139,19 @@ public class QueryFrame {
 
             }
         });
-    browseButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JFileChooser choix = new JFileChooser();
-            int retour = choix.showOpenDialog(null);
-            if (retour == JFileChooser.APPROVE_OPTION) {
-                choix.getSelectedFile().getName();
-                choix.getSelectedFile().getAbsolutePath();
-                jdbcUtils.getFileUtils().setMyFile(choix.getSelectedFile());
-                JOptionPane.showMessageDialog(null, "File Saved!", "File", JOptionPane.INFORMATION_MESSAGE);
-            } else ;
-        }
-    });
+        browseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser choix = new JFileChooser();
+                int retour = choix.showOpenDialog(null);
+                if (retour == JFileChooser.APPROVE_OPTION) {
+                    choix.getSelectedFile().getName();
+                    choix.getSelectedFile().getAbsolutePath();
+                    jdbcUtils.getFileUtils().setMyFile(choix.getSelectedFile());
+                    JOptionPane.showMessageDialog(null, "File Saved!", "File", JOptionPane.INFORMATION_MESSAGE);
+                } else ;
+            }
+        });
     }
 
 

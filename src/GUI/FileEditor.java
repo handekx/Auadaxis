@@ -3,6 +3,7 @@ package GUI;
 import main.JDBCUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class FileEditor {
         JFrame frame = new JFrame("FileEditor");
 
         frame.setContentPane(panel1);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
 
@@ -26,6 +28,7 @@ public class FileEditor {
 
     public void initTextPane() {
         File f = jdbcUtils.getFileUtils().getMyFile();
+        fileEditorLabel.setText(f.getName());
         Scanner sc = null;
         try {
             sc = new Scanner(f);
@@ -41,4 +44,6 @@ public class FileEditor {
     }
 
     private JTextPane textPane1;
+    private JLabel fileEditorLabel;
+
 }

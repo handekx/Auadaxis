@@ -17,7 +17,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="c6680" class="javax.swing.JLabel">
+              <component id="c6680" class="javax.swing.JLabel" binding="fileEditorLabel">
                 <constraints/>
                 <properties>
                   <text value="File Editor"/>
